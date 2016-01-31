@@ -1,3 +1,4 @@
+# erlang common ignore files
 .eunit
 deps
 *.o
@@ -8,3 +9,21 @@ ebin
 rel/example_project
 .concrete/DEV_MODE
 .rebar
+
+
+# project-specific
+applications/
+bin/
+doc/
+ebin/
+examples/
+include/
+logs/
+priv/
+rollbackBackupDirectory/
+ssl/
+LICENSE
+README.txt
+*.lnk
+vsn.mk
+*.exe
