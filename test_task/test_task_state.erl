@@ -1,11 +1,21 @@
 -module(test_task_state).
+-export([initial_state/0]).
+
 -record(task_state, {r1, r2, r3}).
 
-initialServerState() ->
-	
+initial_state() ->
+	#task_state{r1=undefined,r2=undefined,r3=undefined}.
 	   
-alloc(Arg) ->
-	Arg.
+allocate(Resource, State) ->
+	State.
 
-free(Channel, Arg) ->
-	{ Channel, Arg }.
+deallocate(ResourceID, State) ->
+	State.
+
+reset(State) ->
+	initial_state().
+%alloc(Arg) ->
+%	Arg.
+
+%free(Channel, Arg) ->
+%	{ Channel, Arg }.
