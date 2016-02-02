@@ -1,4 +1,4 @@
--module(test_task_resource_server).
+-module(resource_server).
 -export([allocate/1, deallocate/1, list/0, reset/0]).
 
 -behaviour(gen_server).
@@ -21,15 +21,15 @@ reset() ->
 	gen_server:call(test_task_resource_server, reset).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 init(_Args) ->
-	{ok, test_task_state:initial_state()}.
+	{ok, state:initial_state()}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 handle_call( { allocate, Resource }, _From, State) ->
-	StateModified = test_task_state:allocate(Resource, State),
+	StateModified = state:allocate(Resource, State),
 	Reply = State,
 	{reply, Reply, StateModified};
 
 handle_call( { deallocate, ResourceID }, _From, State) ->
-	StateModified = test_task_state:deallocate(ResourceID, State),
+	StateModified = state:deallocate(ResourceID, State),
 	Reply = State,
 	{reply, Reply, StateModified};
 
@@ -39,7 +39,7 @@ handle_call( list, _From, State) ->
 	{reply, Reply, StateModified};
 
 handle_call( reset, _From, State) ->
-	StateModified = test_task_state:reset(State),
+	StateModified = state:reset(State),
 	Reply = State,
 	{reply, Reply, StateModified};
 

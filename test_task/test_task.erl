@@ -5,16 +5,14 @@
 -include("../include/yaws_api.hrl").
 	
 start() ->
-	io:format("starting state manager~n", []),
-	test_task_resource_server:start_link(),
-	io:format("starting state manager done ~n", []).
+	resource_server:start_link().
 
 box(Str) ->
     {'div',[{class,"box"}],
      {pre,[],Str}}.
 
 out(A) ->
-    Reply = test_task_resource_server:allocate("Alice"),
+    Reply = resource_server:allocate("Alice"),
     Request = A#arg.req,
     OldState = A#arg.state,
     NewArg = A#arg{ state = 1 },

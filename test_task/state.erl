@@ -1,4 +1,4 @@
--module(test_task_state).
+-module(state).
 -export([initial_state/0, allocate/2, deallocate/2, reset/1]).
 
 -record(task_state, {r1, r2, r3}).
@@ -14,8 +14,3 @@ deallocate(ResourceID, State) ->
 
 reset(State) ->
 	initial_state().
-%alloc(Arg) ->
-%	Arg.
-
-%free(Channel, Arg) ->
-%	{ Channel, Arg }.
