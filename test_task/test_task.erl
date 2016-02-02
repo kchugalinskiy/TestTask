@@ -1,10 +1,13 @@
 -module(test_task).
--export([out/1]).
+-export([out/1, start/0]).
 
 -include_lib("eunit/include/eunit.hrl").
 -include("../include/yaws_api.hrl").
-
--record(task_state, {r1, r2, r3}).
+	
+start() ->
+	io:format("starting state manager~n", []),
+	test_task_resource_server:start_link(),
+	io:format("starting state manager done ~n", []).
 
 box(Str) ->
     {'div',[{class,"box"}],
