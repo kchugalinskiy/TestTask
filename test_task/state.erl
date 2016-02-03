@@ -1,10 +1,7 @@
 -module(state).
--export([initial_state/0, allocate/2, deallocate/2, reset/1]).
+-export([initial_state/0, allocate/2, deallocate/2, reset/1, list/2]).
 -include_lib("eunit/include/eunit.hrl").
-
--record(resource, {username, resource_id}).
-
--record(task_state, {allocated_list, free_list}).
+-include("state.hrl").
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % module interface
 initial_state() ->
@@ -30,6 +27,12 @@ deallocate(_, _) ->
 	
 reset(_) ->
 	{ok, initial_state()}.
+
+list([], State) ->
+	{ok, State};
+list(Username, State) ->
+	FoundResources = [ Found || Found <- State#task_state.allocated_list, Found#resource.username == Username ],
+	{ok, FoundResources}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Testing
 ok_result( { ok, State } ) ->
@@ -53,6 +56,14 @@ deallocate_multiple(N, State) ->
 		error -> StateComplexNew;
 		_ -> deallocate_multiple(N-1, StateNew)
 	end.
+
+list_test() ->
+	State = ok_result(allocate_multiple(3, initial_state())),
+	?assert( list("Username1", State) =:= {ok, [#resource{username="Username1", resource_id=r3} ]} ),
+	?assert( list("Username2", State) =:= {ok, [#resource{username="Username2", resource_id=r2} ]} ),
+	?assert( list("Username3", State) =:= {ok, [#resource{username="Username3", resource_id=r1} ]} ),
+	?assert( list("Username4", State) =:= {ok, []} ),
+	?assert( list([], State) =:= {ok, State}).
 
 reset_test_() ->
 	[?_assert( reset(ok_result(allocate_multiple(3, initial_state()))) =:= {ok, initial_state()}),
