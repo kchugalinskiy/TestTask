@@ -3,30 +3,56 @@
 
 -include_lib("eunit/include/eunit.hrl").
 -include("../include/yaws_api.hrl").
-	
+-include("state.hrl").
+
 start() ->
 	resource_server:start_link().
 
 out(A) ->
     Request = A#arg.req,
     RequestMethod = Request#http_request.method,
-	RequestPath = tokens( Request#http_request.path, ["/"],
-    dispatch_request(A#arg.pathinfo, RequestMethod, []),
-    JsonData = rfc4627:encode( {obj, [{"a", 1}, {"b", 2}]} ),
-    io:format("Json data : ~p~n", [JsonData]),
-    { html, JsonData }.
+    RequestPath = string:tokens( Request#http_request.path, "/"),
+    if length(RequestPath) == 0 ->
+        bad_request();
+    true ->
+        io:format("path = ~p~n", RequestPath),
+        RestFunction = hd(RequestPath),
+        RestArguments = tl(RequestPath),
+        {HttpStatusCode, JsonData} = dispatch_request(RestFunction, RequestMethod, RestArguments),
+        io:format("Response data : ~p~nResponse code : ~p~n", [JsonData, HttpStatusCode]),
+        case JsonData of
+            empty_body -> {status, HttpStatusCode};
+            _ -> [{status, HttpStatusCode}, {html, JsonData}]
+        end
+    end.
 
 dispatch_request("allocate", 'GET', [Username]) ->
-  { ok, resource_server:allocate(Username) };
+    AllocResult = resource_server:allocate(Username),
+    case AllocResult of
+        {ok, ResourceID} -> { 201, atom_to_list(ResourceID) };
+        error_out_of_resources -> { 503, "Out of resources" }
+    end;
 
 dispatch_request("deallocate", 'GET', [ResourceID]) ->
-  { ok, resource_server:deallocate(ResourceID) };
+    case resource_server:deallocate(ResourceID) of
+        ok -> { 204, empty_body };
+        error_not_found -> { 404, "Not allocated" }
+    end;
 
 dispatch_request("reset", 'GET', []) ->
-  { ok, resource_server:reset() };
+    ok = resource_server:reset(),
+    { 204, empty_body };
 
-dispatch_request("list", 'GET', []) ->
-  { ok, resource_server:list() };
+dispatch_request("list", 'GET', Path) ->
+    Result = resource_server:list(Path),
+    case Path of
+        Path when length(Path) > 2 -> bad_request();
+        [] -> { 200, rfc4627:encode({ obj, state_conversion_utils:state_to_json_full(Result) }) };
+        _  -> { 200, rfc4627:encode([state_conversion_utils:resource_to_json_id(Elem) || Elem <- Result ]) }
+    end;
 
-dispatch_request(BadRequest, BadHTTPMethod, Params) ->
-  { error, { bad_request } }.
+dispatch_request(_BadRequest, _BadHTTPMethod, _Path) ->
+    bad_request().
+
+bad_request() ->
+    { 400, "Bad request" }.

@@ -30,8 +30,8 @@ init(_Args) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 handle_call( { allocate, Username }, _From, State) ->
 	case state:allocate(Username, State) of
-		{ ok, NewState } -> {reply, ok, NewState};
-		{ error, _ } -> {reply, error_out_of_resources, State}
+		{ ok, ResourceID, NewState } -> {reply, {ok, ResourceID}, NewState};
+		{ error, _, _ } -> {reply, error_out_of_resources, State}
 	end;
 
 handle_call( { deallocate, ResourceID }, _From, State) ->
@@ -68,18 +68,18 @@ start_stop_test() ->
 allocate_overrun_test() ->
 	{ok, Pid} = start_link(),
 	unlink(Pid),
-	?assert( allocate("ivan") =:= ok ),
-	?assert( allocate("dima") =:= ok ),
-	?assert( allocate("andrey") =:= ok ),
+	?assert( allocate("ivan") =:= {ok, r1} ),
+	?assert( allocate("dima") =:= {ok, r2} ),
+	?assert( allocate("andrey") =:= {ok, r3} ),
 	?assert( allocate("slava") =:= error_out_of_resources ),
 	stop().
 
 allocate_overrun_dealloc_test() ->
 	{ok, Pid} = start_link(),
 	unlink(Pid),
-	?assert( allocate("ivan") =:= ok ),
-	?assert( allocate("dima") =:= ok ),
-	?assert( allocate("andrey") =:= ok ),
+	?assert( allocate("ivan") =:= {ok, r1} ),
+	?assert( allocate("dima") =:= {ok, r2} ),
+	?assert( allocate("andrey") =:= {ok, r3} ),
 	?assert( allocate("slava") =:= error_out_of_resources ),
 	?assert( deallocate(r1) =:= ok ),
 	?assert( deallocate(r1) =:= error_not_found ),
@@ -93,9 +93,9 @@ allocate_overrun_dealloc_test() ->
 list_reset_test() ->
 	{ok, Pid} = start_link(),
 	unlink(Pid),
-	?assert( allocate("ivan") =:= ok ),
-	?assert( allocate("dima") =:= ok ),
-	?assert( allocate("ivan") =:= ok ),
+	?assert( allocate("ivan") =:= {ok, r1} ),
+	?assert( allocate("dima") =:= {ok, r2} ),
+	?assert( allocate("ivan") =:= {ok, r3} ),
 	?assert( allocate("slava") =:= error_out_of_resources ),
 	ReferenceState = #task_state{
 		allocated_list=[#resource{resource_id=r3, username="ivan"},
@@ -109,9 +109,9 @@ list_reset_test() ->
 	?assert( reset() =:= ok ),
 	?assert( list([]) == state:initial_state() ),
 	?assert( list("ivan") == [] ),
-	?assert( allocate("ivan") =:= ok ),
-	?assert( allocate("dima") =:= ok ),
-	?assert( allocate("andrey") =:= ok ),
+	?assert( allocate("ivan") =:= {ok, r1} ),
+	?assert( allocate("dima") =:= {ok, r2} ),
+	?assert( allocate("andrey") =:= {ok, r3} ),
 	?assert( allocate("slava") =:= error_out_of_resources ),
 	ReferenceState2 = #task_state{
 		allocated_list=[#resource{resource_id=r3, username="andrey"},

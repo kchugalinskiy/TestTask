@@ -8,9 +8,9 @@ initial_state() ->
 	#task_state{allocated_list=[],free_list=[ #resource{resource_id=r1}, #resource{resource_id=r2}, #resource{resource_id=r3} ]}.
 	   
 allocate(Username, #task_state{ allocated_list=Allocated, free_list=[FreeHead | FreeTail] } ) ->
-	{ ok, #task_state{ allocated_list=[FreeHead#resource{username=Username}|Allocated], free_list=FreeTail } };
-allocate(_, #task_state{ free_list=[] } ) ->
-	{ error, resource_container_full }.
+	{ ok, FreeHead#resource.resource_id, #task_state{ allocated_list=[FreeHead#resource{username=Username}|Allocated], free_list=FreeTail } };
+allocate(_, State=#task_state{ free_list=[] } ) ->
+	{ error, resource_container_full, State }.
 
 deallocate(ResourceID, #task_state{ allocated_list=AllocatedList, free_list=FreeList }) ->
 	FoundAllocatedResourceList = [ Allocated || Allocated=#resource{resource_id=Res} <- AllocatedList, Res == ResourceID ],
@@ -41,11 +41,11 @@ ok_result( { ok, State } ) ->
 allocate_multiple(0, State) ->
 	{ok, State};
 allocate_multiple(N, State) ->
-	{ Status, NewState } = allocate("Username" ++ hd(io_lib:format("~p", [N])), State),
-	RecursionResult={ _, RecursionState } = allocate_multiple(N-1, NewState),
+	{ Status, FailReason, NewState } = allocate("Username" ++ hd(io_lib:format("~p", [N])), State),
+	RecursionResult = allocate_multiple(N-1, NewState),
 	case Status of
 		ok -> RecursionResult;
-		error -> { error, RecursionState }
+		error -> { error, FailReason }
 	end.
 
 deallocate_multiple(0, State) ->
