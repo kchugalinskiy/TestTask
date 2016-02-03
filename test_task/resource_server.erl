@@ -8,8 +8,8 @@
 start_link() ->
 	gen_server:start_link( { local, test_task_resource_server }, test_task_resource_server, [], [] ).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-allocate(Resource) ->
-	gen_server:call(test_task_resource_server, { allocate, Resource } ).
+allocate(Username) ->
+	gen_server:call(test_task_resource_server, { allocate, Username } ).
 
 deallocate(ResourceID) ->
 	gen_server:call(test_task_resource_server, { deallocate, ResourceID } ).
@@ -23,8 +23,8 @@ reset() ->
 init(_Args) ->
 	{ok, state:initial_state()}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-handle_call( { allocate, Resource }, _From, State) ->
-	StateModified = state:allocate(Resource, State),
+handle_call( { allocate, Username }, _From, State) ->
+	StateModified = state:allocate(Username, State),
 	Reply = State,
 	{reply, Reply, StateModified};
 

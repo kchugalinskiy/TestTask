@@ -10,13 +10,14 @@ start() ->
 out(A) ->
     Request = A#arg.req,
     RequestMethod = Request#http_request.method,
+	RequestPath = tokens( Request#http_request.path, ["/"],
     dispatch_request(A#arg.pathinfo, RequestMethod, []),
     JsonData = rfc4627:encode( {obj, [{"a", 1}, {"b", 2}]} ),
     io:format("Json data : ~p~n", [JsonData]),
     { html, JsonData }.
 
-dispatch_request("allocate", 'GET', [Resource]) ->
-  { ok, resource_server:allocate(Resource) };
+dispatch_request("allocate", 'GET', [Username]) ->
+  { ok, resource_server:allocate(Username) };
 
 dispatch_request("deallocate", 'GET', [ResourceID]) ->
   { ok, resource_server:deallocate(ResourceID) };
