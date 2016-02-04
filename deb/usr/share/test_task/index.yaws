@@ -1,0 +1,4 @@
+<erl>
+out(A) ->
+    test_task:out(A).
+</erl>.
