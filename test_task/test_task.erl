@@ -11,7 +11,9 @@ start() ->
 out(A) ->
     Request = A#arg.req,
     RequestMethod = Request#http_request.method,
-    RequestPath = string:tokens( Request#http_request.path, "/"),
+    {_, RelPath} = Request#http_request.path,
+    RequestPath = string:tokens(RelPath, "/"),
+    io:format("RequestPath = ~p~n", [RequestPath]),
     if length(RequestPath) == 0 ->
         bad_request();
     true ->
