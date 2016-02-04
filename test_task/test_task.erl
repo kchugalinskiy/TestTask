@@ -13,4 +13,5 @@ out(A) ->
     RequestMethod = Request#http_request.method,
     {_, RelPath} = Request#http_request.path,
     RequestPath = string:tokens(RelPath, "/"),
-	deispatcher:dispatch_path(RequestMethod, RequestPath).
+	QueryData = A#arg.querydata,
+	dispatcher:dispatch_path(RequestMethod, RequestPath, QueryData).
