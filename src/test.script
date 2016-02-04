@@ -1,0 +1,10 @@
+#!/usr/bin/env escript
+
+main([]) ->
+    halt(0);
+main([Test|Modules]) ->
+    {ok,Module} = compile:file(list_to_atom(Test)),
+    Module:test(),
+    main(Modules);
+main(_) ->
+    halt(1).
