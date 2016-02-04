@@ -45,13 +45,13 @@ dispatch_request("reset", 'GET', []) ->
     ok = resource_server:reset(),
     { 204, empty_body };
 
-dispatch_request("list", 'GET', Path) ->
-    Result = resource_server:list(Path),
-    case Path of
-        Path when is_list(Path) and length(Path) > 2 -> bad_request();
-        [] -> { 200, json_encode({obj, state_conversion_utils:state_to_json_full(Result)}) };
-        _  -> { 200, json_encode([state_conversion_utils:resource_to_json_id(Elem) || Elem <- Result ]) }
-    end;
+dispatch_request("list", 'GET', [Username]) ->
+    Result = resource_server:list(Username),
+	{ 200, json_encode([state_conversion_utils:resource_to_json_id(Elem) || Elem <- Result ]) };
+
+dispatch_request("list", 'GET', []) ->
+    Result = resource_server:list_all(),
+    { 200, json_encode({obj, state_conversion_utils:state_to_json_full(Result)}) };
 
 dispatch_request(_BadRequest, _BadHTTPMethod, _Path) ->
     bad_request().
