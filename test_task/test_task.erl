@@ -17,7 +17,7 @@ out(A) ->
     if length(RequestPath) == 0 ->
         bad_request();
     true ->
-        io:format("path = ~p~n", RequestPath),
+        io:format("path = ~p~n", [RequestPath]),
         RestFunction = hd(RequestPath),
         RestArguments = tl(RequestPath),
         {HttpStatusCode, JsonData} = dispatch_request(RestFunction, RequestMethod, RestArguments),
@@ -31,7 +31,7 @@ out(A) ->
 dispatch_request("allocate", 'GET', [Username]) ->
     AllocResult = resource_server:allocate(Username),
     case AllocResult of
-        {ok, ResourceID} -> { 201, atom_to_list(ResourceID) };
+        {ok, ResourceID} -> { 201, atom_to_list(ResourceID) ++ "" };
         error_out_of_resources -> { 503, "Out of resources" }
     end;
 
@@ -48,13 +48,17 @@ dispatch_request("reset", 'GET', []) ->
 dispatch_request("list", 'GET', Path) ->
     Result = resource_server:list(Path),
     case Path of
-        Path when length(Path) > 2 -> bad_request();
-        [] -> { 200, rfc4627:encode({ obj, state_conversion_utils:state_to_json_full(Result) }) };
-        _  -> { 200, rfc4627:encode([state_conversion_utils:resource_to_json_id(Elem) || Elem <- Result ]) }
+        Path when is_list(Path) and length(Path) > 2 -> bad_request();
+        [] -> { 200, json_encode({obj, state_conversion_utils:state_to_json_full(Result)}) };
+        _  -> { 200, json_encode([state_conversion_utils:resource_to_json_id(Elem) || Elem <- Result ]) }
     end;
 
 dispatch_request(_BadRequest, _BadHTTPMethod, _Path) ->
     bad_request().
+
+json_encode(Object) ->
+    io:format("converting to json = ~p~n", [Object]),
+    rfc4627:encode(Object).
 
 bad_request() ->
     { 400, "Bad request" }.
