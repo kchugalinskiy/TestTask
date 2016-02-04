@@ -1,11 +1,21 @@
 #!/usr/bin/env escript
 
-main([]) ->
-    halt(0);
-main([Test|Modules]) ->
-    {ok,Module} = compile:file(list_to_atom(Test)),
-    Module:test(),
-    file:delete(Test ++ ".beam"),
-    main(Modules);
+run_tests([]) ->
+    ok;
+run_tests([Test|Modules]) ->
+    case code:load_file(list_to_atom(Test)) of
+	{module, Module} -> Module:test();
+	{error, Reason} -> io:format("error loading ~p ~p~n", [Test, Reason])
+    end,
+    run_tests(Modules).
+
+cleanup([]) ->
+    ok;
+cleanup([_Test|Modules]) ->
+    cleanup(Modules).
+
+main(Tests) ->
+    run_tests(Tests),
+    cleanup(Tests);
 main(_) ->
     halt(1).
