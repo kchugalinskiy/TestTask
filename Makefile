@@ -1,4 +1,4 @@
-all: build
+all: build runtest deb
 
 build:
 	erl -make
@@ -6,5 +6,5 @@ build:
 runtest: build
 	cd ./deb/usr/share/test_task && ../../../../src/test.script state state_conversion_utils dispatcher resource_server
 
-deb:
-	echo "Not implemented"
+deb: build
+	fakeroot dpkg-deb --build deb

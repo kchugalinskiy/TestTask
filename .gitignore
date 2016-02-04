@@ -27,3 +27,4 @@ README.txt
 *.lnk
 vsn.mk
 *.exe
+*.deb

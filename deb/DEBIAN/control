@@ -1,5 +1,5 @@
-Package: test_task
-Version: 1.0<br>Version: 02.2016
+Package: ttask
+Version: 1.0
 Maintainer: kchugalinskiy@yandex.ru
 Architecture: all
 Section: misc
