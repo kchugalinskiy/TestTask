@@ -111,8 +111,11 @@ workflow_2_test() ->
 	?assert( dispatch_request("allocate", 'GET', ["dima"]) =:= {201, json_encode(r2)} ),
 	?assert( dispatch_request("allocate", 'GET', ["ivan"]) =:= {201, json_encode(r3)} ),
 	?assert( dispatch_request("list", 'GET', ["ivan"]) =:= {200, json_encode([r1, r3])} ),
-	IvanExpectedList = {obj, [ {allocated,[{r1, "ivan"}, {r2, "dima"}, {r3, "ivan"}]}, {deallocated,[]} ]},
+	IvanExpectedList = {obj, [ {allocated,[{obj, [{r1, <<"ivan">>}]}, {obj, [{r2, <<"dima">>}]}, {obj, [{r3, <<"ivan">>}]}]}, {deallocated,[]} ]},
 	?assert( dispatch_request("list", 'GET', []) =:= {200, json_encode(IvanExpectedList)} ),
 	?assert( dispatch_request("deallocate", 'GET', ["r1"]) =:= {204, empty_body} ),
-	IvanExpected2List = {obj, [ {allocated,[{r2, "dima"}, {r3, "ivan"}]}, {deallocated,[r1]} ]},
+	IvanExpectedList2 = {obj, [ {allocated,[{obj, [{r2, <<"dima">>}]}, {obj, [{r3, <<"ivan">>}]}]}, {deallocated,[r1]} ]},
+	?assert( dispatch_request("list", 'GET', []) =:= {200, json_encode(IvanExpectedList2)} ),
+	?assert( dispatch_request("list", 'GET', ["dima"]) =:= {200, json_encode([r2])} ),
+	?assert( dispatch_request("list", 'GET', ["ivan"]) =:= {200, json_encode([r3])} ),
 	resource_server:stop().

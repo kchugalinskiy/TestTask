@@ -8,7 +8,7 @@ initial_state() ->
 	#task_state{allocated_list=[],free_list=[ #resource{resource_id=r1}, #resource{resource_id=r2}, #resource{resource_id=r3} ]}.
 	   
 allocate(Username, #task_state{ allocated_list=Allocated, free_list=[FreeHead | FreeTail] } ) ->
-	{ ok, FreeHead#resource.resource_id, #task_state{ allocated_list=[FreeHead#resource{username=Username}|Allocated], free_list=FreeTail } };
+	{ ok, FreeHead#resource.resource_id, #task_state{ allocated_list=Allocated ++ [FreeHead#resource{username=Username}], free_list=FreeTail } };
 allocate(_, State=#task_state{ free_list=[] } ) ->
 	{ error, resource_container_full, State }.
 
