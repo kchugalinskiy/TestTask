@@ -14,10 +14,10 @@ resource_to_json_id(#resource{resource_id=ResourceId}) ->
 	ResourceId.
 
 resource_to_json_full(#resource{resource_id=ResourceId, username=Username}) ->
-	{ ResourceId, Username }.
+	{obj, [{ResourceId, list_to_binary(Username)}] }.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Testing
 resource_conversion_test_() ->
 	[?_assert( resource_to_json_id(#resource{resource_id=r1}) =:= r1 ),
-	 ?_assert( resource_to_json_full(#resource{resource_id=r1, username="Username"}) =:= {r1, "Username"} )
+	 ?_assert( resource_to_json_full(#resource{resource_id=r1, username="Username"}) =:= {obj, [{r1, <<"Username">>}]} )
 	].

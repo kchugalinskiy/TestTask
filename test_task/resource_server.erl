@@ -1,5 +1,5 @@
 -module(resource_server).
--export([allocate/1, deallocate/1, list/1, reset/0]).
+-export([allocate/1, deallocate/1, list/1, list_all/0, reset/0]).
 -include_lib("eunit/include/eunit.hrl").
 -include("state.hrl").
 
@@ -37,7 +37,7 @@ handle_call( { allocate, Username }, _From, State) ->
 		{ error, _, _ } -> {reply, error_out_of_resources, State}
 	end;
 
-handle_call( { deallocate, ResourceID }, _From, State) ->
+handle_call( { deallocate, ResourceID }, _From, State) when is_atom(ResourceID) ->
 	case state:deallocate(ResourceID, State) of
 		{ ok, NewState } -> {reply, ok, NewState};
 		{ error, _ } -> {reply, error_not_found, State}
