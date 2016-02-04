@@ -5,6 +5,7 @@ main([]) ->
 main([Test|Modules]) ->
     {ok,Module} = compile:file(list_to_atom(Test)),
     Module:test(),
+    file:delete(Test ++ ".beam"),
     main(Modules);
 main(_) ->
     halt(1).
