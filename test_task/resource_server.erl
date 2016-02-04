@@ -16,6 +16,9 @@ allocate(Username) ->
 deallocate(ResourceID) ->
 	gen_server:call({global, resource_server}, { deallocate, ResourceID } ).
 
+list_all() ->
+	gen_server:call({global, resource_server}, list_all ).
+	
 list(Username) ->
 	gen_server:call({global, resource_server}, { list, Username } ).
 
@@ -40,6 +43,10 @@ handle_call( { deallocate, ResourceID }, _From, State) ->
 		{ error, _ } -> {reply, error_not_found, State}
 	end;
 
+handle_call( list_all, _From, State) ->
+	{ok, Reply} = state:list_all(State),
+	{reply, Reply, State};
+	
 handle_call( { list, Username }, _From, State) ->
 	{ok, Reply} = state:list(Username, State),
 	{reply, Reply, State};
@@ -104,10 +111,10 @@ list_reset_test() ->
 		free_list=[]
 	},
 	ReferenceListDuplicate = [ #resource{resource_id=r3, username="ivan"}, #resource{resource_id=r1, username="ivan"} ],
-	?assert( list([]) == ReferenceState ),
+	?assert( list_all() == ReferenceState ),
 	?assert( list("ivan") == ReferenceListDuplicate ),
 	?assert( reset() =:= ok ),
-	?assert( list([]) == state:initial_state() ),
+	?assert( list_all() == state:initial_state() ),
 	?assert( list("ivan") == [] ),
 	?assert( allocate("ivan") =:= {ok, r1} ),
 	?assert( allocate("dima") =:= {ok, r2} ),
@@ -119,6 +126,6 @@ list_reset_test() ->
 						#resource{resource_id=r1, username="ivan"}],
 		free_list=[]
 	},
-	?assert( list([]) == ReferenceState2 ),
+	?assert( list_all() == ReferenceState2 ),
 	?assert( list("dima") == [#resource{resource_id=r2, username="dima"}] ),
 	stop().

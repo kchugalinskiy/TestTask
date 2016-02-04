@@ -6,7 +6,7 @@
 -include("state.hrl").
 
 start() ->
-	resource_server:start_link().
+	resource_server_sup:start_link().
 
 out(A) ->
     Request = A#arg.req,
