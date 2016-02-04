@@ -1,8 +1,8 @@
 Package: ttask
 Version: 1.0
-Maintainer: kchugalinskiy@yandex.ru
+Maintainer: Konstantin Chugalinskiy kchugalinskiy@yandex.ru
 Architecture: all
 Section: misc
 Description: Hire me :-)
-Depends: erlang, yaws (>= 1.98)
+Depends: erlang (>= 16.0), yaws (>= 1.98)
 Origin: https://github.com/konstantinchugalinskiy/TestTask
