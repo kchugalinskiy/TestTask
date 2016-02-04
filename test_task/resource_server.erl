@@ -59,7 +59,6 @@ handle_call( stop, _, State ) ->
     {stop, shutdown, ok, State};
 
 handle_call( _, _, State) ->
-	io:format("handle_call nothing~n", []),
 	{noreply, State}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 terminate(shutdown, _State) ->
@@ -105,12 +104,12 @@ list_reset_test() ->
 	?assert( allocate("ivan") =:= {ok, r3} ),
 	?assert( allocate("slava") =:= error_out_of_resources ),
 	ReferenceState = #task_state{
-		allocated_list=[#resource{resource_id=r3, username="ivan"},
+		allocated_list=[#resource{resource_id=r1, username="ivan"},
 						#resource{resource_id=r2, username="dima"},
-						#resource{resource_id=r1, username="ivan"}],
+						#resource{resource_id=r3, username="ivan"}],
 		free_list=[]
 	},
-	ReferenceListDuplicate = [ #resource{resource_id=r3, username="ivan"}, #resource{resource_id=r1, username="ivan"} ],
+	ReferenceListDuplicate = [ #resource{resource_id=r1, username="ivan"}, #resource{resource_id=r3, username="ivan"} ],
 	?assert( list_all() == ReferenceState ),
 	?assert( list("ivan") == ReferenceListDuplicate ),
 	?assert( reset() =:= ok ),
@@ -121,9 +120,9 @@ list_reset_test() ->
 	?assert( allocate("andrey") =:= {ok, r3} ),
 	?assert( allocate("slava") =:= error_out_of_resources ),
 	ReferenceState2 = #task_state{
-		allocated_list=[#resource{resource_id=r3, username="andrey"},
+		allocated_list=[#resource{resource_id=r1, username="ivan"},
 						#resource{resource_id=r2, username="dima"},
-						#resource{resource_id=r1, username="ivan"}],
+						#resource{resource_id=r3, username="andrey"}],
 		free_list=[]
 	},
 	?assert( list_all() == ReferenceState2 ),
