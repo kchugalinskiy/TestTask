@@ -8,3 +8,8 @@ runtest: build
 
 deb: build
 	fakeroot dpkg-deb --build deb
+	mv deb.deb ttask.deb
+	chmod 744 ttask.deb
+
+configure:
+	sudo cp yaws.conf /etc/yaws/yaws.conf
