@@ -1,7 +1,7 @@
  #!/bin/sh
 # chkconfig: - 98 02
-# description:  Описание процесса
-# processname: Имя процесса
+# description: Hire me
+# processname: test_task_service
 
 # Source function library.
 if [ -f /etc/init.d/functions ] ; then
