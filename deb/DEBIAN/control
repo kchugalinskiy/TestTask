@@ -1,0 +1,8 @@
+Package: test_task
+Version: 1.0<br>Version: 02.2016
+Maintainer: kchugalinskiy@yandex.ru
+Architecture: all
+Section: misc
+Description: Hire me :-)
+Depends: erlang, yaws (>= 1.98)
+Origin: https://github.com/konstantinchugalinskiy/TestTask
