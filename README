@@ -1,11 +1,17 @@
 0. known bugs: http://localhost:8080 will return non-standard 404. This is some yaws issue.
+
 1.
 make build - build binaries
 make runtest - build binaries + run UTs
 make deb - build deb file
 make configure - copy yaws configuration scripts
+
 2. Before running - please run make configure once!
 To run install generated deb package and execute script by running command
 test_task
 or start yaws as a service:
 service yaws start
+
+3.
+I tried to run application in docker container, but I've failed to configure it on different OS and docker versions.
+Dockerfile is provided in this repository. It mustn't be a problem to launch this service, the problem is probably on configuration side.
