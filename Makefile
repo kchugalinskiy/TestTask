@@ -1,5 +1,13 @@
 all: build runtest deb
 
+clean:
+	find . -name *.beam -exec rm -f {} \;
+	find . -name *.deb -exec rm -f {} \;
+
+docker: deb
+	cp ./ttask.deb ./container_sample/ttask.deb
+	sudo docker build ./container_sample
+
 build:
 	erl -make
 
@@ -12,4 +20,4 @@ deb: build
 	chmod 744 ttask.deb
 
 configure:
-	sudo cp yaws.conf /etc/yaws/yaws.conf
+	sudo cp ./container_sample/yaws.conf /etc/yaws/yaws.conf
