@@ -9,6 +9,7 @@ docker: deb
 	sudo docker build -t ttask ./container_sample
 
 build:
+	mkdir --parents ./deb/usr/share/test_task/www
 	erl -make
 
 runtest: build
