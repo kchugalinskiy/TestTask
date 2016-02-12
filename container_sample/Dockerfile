@@ -5,3 +5,4 @@ ADD ttask.deb /tmp/ttask.deb
 COPY yaws.conf /etc/yaws/yaws.conf
 RUN dpkg -i /tmp/ttask.deb
 EXPOSE 8080
+ENTRYPOINT ["yaws"]

@@ -6,7 +6,7 @@ clean:
 
 docker: deb
 	cp ./ttask.deb ./container_sample/ttask.deb
-	sudo docker build ./container_sample
+	sudo docker build -t ttask ./container_sample
 
 build:
 	erl -make
